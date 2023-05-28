@@ -20,13 +20,40 @@
 
         <div class="row">
             <div class="col">
+                <form action="" method="get">
+                    <select name="lang">
+                        <option value="">----</option>
+                        <option value="Python" {% if lang == "Python" %} selected {% endif %}>Python</option>
+                        <option value="JavaScript" {% if lang == "JavaScript" %} selected {% endif %}>JavaScript</option>
+                        <option value="C++" {% if lang == "C++" %} selected {% endif %}>C++</option>
+                    </select>
+                    <button type="submit">Применить</button>
+                    <a href="">Сбросить</a>
+                </form>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col">
                 <table class="table table-striped">
                     <thead class="thead-dark">
                     <tr>
                         <th scope="col">ID</th>
-                        <th scope="col">Название</th>
+                        <th scope="col">
+                            {% if sort == "name" %}
+                                <a href="?sort=-name">Название</a>
+                                <i class="fa-solid fa-caret-up"></i>
+                            {% elif sort == "-name" %}
+                                <a href="?sort=name">Название</a>
+                                <i class="fa-solid fa-caret-down"></i>
+                            {% else %}
+                                <a href="?sort=name">Название</a>
+                            {% endif %}
+                        </th>
                         <th scope="col">Язык программирования</th>
+                        <th scope="col">Автор</th>
                         <th scope="col">Дата создания</th>
+                        <th scope="col">Доступ</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -35,12 +62,25 @@
                             <td scope="row">{{ snippet.id }}</td>
                             <td>
                                 <a href="{% url 'snippet-detail' snippet.id %}">{{ snippet.name }}</a>
-                                <a href="{% url 'snippet-edit' snippet.id %}"><i class="fa-solid fa-pen-to-square" style="color: #050505;"></i></a>
-                                <a href="{% url 'snippet-del' snippet.id %}"><i class="fa-solid fa-trash" style="color: #0d0d0d;"></i></a>
+                                {% if snippet.user == request.user %}
+                                    <a href="{% url 'snippet-edit' snippet.id %}">
+                                        <i class="fa-solid fa-pen-to-square" style="color: #050505;"></i>
+                                    </a>
+                                    <a href="{% url 'snippet-del' snippet.id %}">
+                                        <i class="fa-solid fa-trash" style="color: #0d0d0d;"></i>
+                                    </a>
+                                {% endif %}
                             </td>
                             <td>{{ snippet.lang }}</td>
+                            <td>{{ snippet.user.username }}</td>
                             <td>{{ snippet.creation_date }}</td>
-
+                            <td>
+                                {% if snippet.private %}
+                                    <i class="fa-solid fa-lock"></i>
+                                {% else %}
+                                    <i class="fa-solid fa-lock-open"></i>
+                                {% endif %}
+                            </td>
                         </tr>
                     {% endfor %}
                     </tbody>
